@@ -14,7 +14,7 @@ export class TodoService {
   // TODO: hacer un get de todos los datos de la base de datos
   async findAll() {
     try {
-      await this.todoRepository.find();
+      return await this.todoRepository.find();
     } catch (error: any) {
       console.log(error);
       throw new InternalServerErrorException(error.message);
