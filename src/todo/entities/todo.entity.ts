@@ -6,10 +6,15 @@ import { BaseEntity } from 'src/config/base.entity';
   name: 'todos',
 })
 export class TodoEntity extends BaseEntity implements Todo {
-  @Column()
+  @Column({
+    type: 'text',
+  })
   title: string;
 
-  @Column()
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
   description: string;
 
   @Column({ default: false })
