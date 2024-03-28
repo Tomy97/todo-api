@@ -14,7 +14,11 @@ export class TodoService {
   // TODO: hacer un get de todos los datos de la base de datos
   async findAll() {
     try {
-      return await this.todoRepository.find();
+      return await this.todoRepository.find({
+        order: {
+          createdAt: 'ASC',
+        }
+      });
     } catch (error: any) {
       console.log(error);
       throw new InternalServerErrorException(error.message);
@@ -53,7 +57,7 @@ export class TodoService {
   }
   // TODO: hacer un delete de un dato de la base de datos
 
-  async delete(id: number) {
+  async delete(id: string) {
     try {
       await this.todoRepository.delete(id);
     } catch (error: any) {

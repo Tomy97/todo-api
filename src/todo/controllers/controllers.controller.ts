@@ -29,6 +29,6 @@ export class TodoController {
   // TODO: DELETE de todos los todos de la base de datos
   @Delete(':id')
   async deleteTodo(@Param('id', ParseUUIDPipe ) id: string) {
-    return await this.todosService.delete;
+    return await this.todosService.delete(id);
   }
 }
