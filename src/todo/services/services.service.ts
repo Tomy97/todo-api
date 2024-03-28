@@ -1,9 +1,14 @@
 import { CreateTodoDto } from './../dto/create-todo.dto';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoEntity } from '../entities/todo.entity';
 import { UpdateTodoDto } from '../dto/update-todo.dto';
+import { Todo } from 'src/types/todo';
 
 @Injectable()
 export class TodoService {
@@ -11,20 +16,18 @@ export class TodoService {
     @InjectRepository(TodoEntity)
     private readonly todoRepository: Repository<TodoEntity>,
   ) {}
-  // TODO: hacer un get de todos los datos de la base de datos
   async findAll() {
     try {
       return await this.todoRepository.find({
         order: {
           createdAt: 'ASC',
-        }
+        },
       });
     } catch (error: any) {
       console.log(error);
       throw new InternalServerErrorException(error.message);
     }
   }
-  // TODO: hacer un post de un nuevo dato a la base de datos
 
   async create(createTodoDto: CreateTodoDto) {
     try {
@@ -37,25 +40,18 @@ export class TodoService {
     }
   }
 
-  // TODO: hacer un put de un dato de la base de datos
-
-  async update(id: string, updateTodoDto: UpdateTodoDto) {
+  async update(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo> {
     const todo = await this.todoRepository.preload({
       id: id,
       ...updateTodoDto,
     });
 
-    if (!todo) throw new InternalServerErrorException('Todo not found');
-    try {
-      await this.todoRepository.save(updateTodoDto);
-
-      return todo;
-    } catch (error: any) {
-      console.log(error);
-      throw new InternalServerErrorException(error.message);
+    if (!todo) {
+      throw new NotFoundException(`Todo with ID "${id}" not found`);
     }
+
+    return this.todoRepository.save(todo);
   }
-  // TODO: hacer un delete de un dato de la base de datos
 
   async delete(id: string) {
     try {
